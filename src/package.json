@@ -1,0 +1,16 @@
+{
+  "name": "telegram-hub",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luzi82/telegram-hub.git"
+  },
+  "author": "luzi82",
+  "dependencies": {
+    "serverless-python-requirements": "^5.0.1"
+  },
+  "bugs": {
+    "url": "https://github.com/luzi82/telegram-hub/issues"
+  },
+  "homepage": "https://github.com/luzi82/telegram-hub#readme"
+}

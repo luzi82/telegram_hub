@@ -1,0 +1,35 @@
+service: telegram-hub
+
+provider:
+  name: aws
+  runtime: python3.7
+  profile: ${file(./serverless.env.yml):AWS_PROFILE, ''}
+  region: ${file(./serverless.env.yml):AWS_REGION, ''}
+  environment:
+    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN, ''}
+
+package:
+  exclude:
+    - ./**
+  include:
+    - handler.py
+    - package.json
+    - requirements.txt
+
+functions:
+  webhook:
+    handler: handler.webhook
+    events:
+      - http: POST /
+
+  set_webhook:
+    handler: handler.set_webhook
+    events:
+      - http: POST /set_webhook
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
