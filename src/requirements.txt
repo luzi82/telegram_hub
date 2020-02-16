@@ -1,1 +1,3 @@
 python-telegram-bot
+futsu
+boto3

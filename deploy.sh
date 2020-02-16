@@ -10,14 +10,10 @@ cd ${MY_PATH}
 rm -rf ${MY_PATH}/tmp
 mkdir -p ${MY_PATH}/tmp
 
-# clone src
-cd ${MY_PATH}
-cp -R ${MY_PATH}/src ${MY_PATH}/tmp/src
-
 # install serverless
-cd ${MY_PATH}/tmp/src
+cd ${MY_PATH}/tmp
 npm install serverless serverless-python-requirements
-SERVERLESS=${MY_PATH}/tmp/src/node_modules/serverless/bin/serverless
+SERVERLESS=${MY_PATH}/tmp/node_modules/serverless/bin/serverless
 
 # init python venv
 cd ${MY_PATH}/tmp
@@ -26,9 +22,12 @@ python3 -m venv venv_deploy
 pip install --upgrade pip
 pip install awscli
 
-# deploy
-cd ${MY_PATH}/tmp/src
-${SERVERLESS} deploy
+# clone src, deploy
+cd ${MY_PATH}/tmp \
+&& rm -rf ${MY_PATH}/tmp/src \
+&& cp -R ${MY_PATH}/src ${MY_PATH}/tmp/src \
+&& cd ${MY_PATH}/tmp/src \
+&& ${SERVERLESS} deploy
 
 # leave python venv
 cd ${MY_PATH}

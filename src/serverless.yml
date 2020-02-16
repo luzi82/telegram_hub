@@ -3,29 +3,55 @@ service: telegram-hub
 provider:
   name: aws
   runtime: python3.7
-  profile: ${file(./serverless.env.yml):AWS_PROFILE, ''}
-  region: ${file(./serverless.env.yml):AWS_REGION, ''}
+  profile: ${file(./serverless.env.yml):AWS_PROFILE, 'us-west-2'}
+  region: ${file(./serverless.env.yml):AWS_REGION, 'default'}
   environment:
-    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN, ''}
+    S3_BUCKET: ${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
+    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN}
+    TELEGRAM_HUB_SECRET: ${file(./serverless.env.yml):TELEGRAM_HUB_SECRET}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+      Resource:
+        - arn:aws:s3:::${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}/*
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource:
+        - arn:aws:s3:::${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
 
 package:
   exclude:
     - ./**
   include:
     - handler.py
-    - package.json
-    - requirements.txt
+    - th.py
 
 functions:
   webhook:
     handler: handler.webhook
     events:
-      - http: POST /
+      - http: POST /webhook
 
   set_webhook:
     handler: handler.set_webhook
     events:
       - http: POST /set_webhook
+
+  send_msg:
+    handler: handler.send_msg
+    events:
+      - http: POST /send_msg
+
+resources:
+  Resources:
+    S3BucketOutputs:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
 
 plugins:
   - serverless-python-requirements
