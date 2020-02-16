@@ -1,3 +1,4 @@
 /.project
 README.md.sl
-src/serverless.env.yml
+/src/serverless.env.yml
+tmp
