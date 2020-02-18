@@ -24,9 +24,9 @@ pip install awscli
 
 # clone src, deploy
 cd ${MY_PATH}/tmp \
-&& rm -rf ${MY_PATH}/tmp/src \
-&& cp -R ${MY_PATH}/src ${MY_PATH}/tmp/src \
-&& cd ${MY_PATH}/tmp/src \
+&& rm -rf ${MY_PATH}/tmp/serverless \
+&& cp -R ${MY_PATH}/serverless ${MY_PATH}/tmp/serverless \
+&& cd ${MY_PATH}/tmp/serverless \
 && ${SERVERLESS} deploy
 
 # leave python venv
