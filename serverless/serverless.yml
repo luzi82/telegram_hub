@@ -3,12 +3,12 @@ service: telegram-hub
 provider:
   name: aws
   runtime: python3.7
-  profile: ${file(./serverless.env.yml):AWS_PROFILE, 'us-west-2'}
-  region: ${file(./serverless.env.yml):AWS_REGION, 'default'}
+  profile: ${file(../conf/serverless.env.json):AWS_PROFILE, 'us-west-2'}
+  region: ${file(../conf/serverless.env.json):AWS_REGION, 'default'}
   environment:
-    S3_BUCKET: ${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
-    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN}
-    TELEGRAM_HUB_SECRET: ${file(./serverless.env.yml):TELEGRAM_HUB_SECRET}
+    S3_BUCKET: ${file(../conf/serverless.env.json):S3_BUCKET, 'telegram-hub'}
+    TELEGRAM_TOKEN: ${file(../conf/serverless.env.json):TELEGRAM_TOKEN}
+    TELEGRAM_HUB_SECRET: ${file(../conf/serverless.env.json):TELEGRAM_HUB_SECRET}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -16,12 +16,12 @@ provider:
         - "s3:PutObject"
         - "s3:DeleteObject"
       Resource:
-        - arn:aws:s3:::${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}/*
+        - arn:aws:s3:::${file(../conf/serverless.env.json):S3_BUCKET, 'telegram-hub'}/*
     - Effect: "Allow"
       Action:
         - "s3:ListBucket"
       Resource:
-        - arn:aws:s3:::${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
+        - arn:aws:s3:::${file(../conf/serverless.env.json):S3_BUCKET, 'telegram-hub'}
 
 package:
   exclude:
@@ -51,7 +51,7 @@ resources:
     S3BucketOutputs:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${file(./serverless.env.yml):S3_BUCKET, 'telegram-hub'}
+        BucketName: ${file(../conf/serverless.env.json):S3_BUCKET, 'telegram-hub'}
 
 plugins:
   - serverless-python-requirements

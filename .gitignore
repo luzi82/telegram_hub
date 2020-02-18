@@ -1,4 +1,4 @@
 /.project
 README.md.sl
-/serverless/serverless.env.yml
+/conf/serverless.env.json
 tmp
