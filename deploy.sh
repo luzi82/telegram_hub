@@ -25,6 +25,7 @@ pip install awscli
 # clone src, deploy
 cd ${MY_PATH}/tmp \
 && rm -rf ${MY_PATH}/tmp/serverless \
+&& cp -R ${MY_PATH}/conf ${MY_PATH}/tmp/conf \
 && cp -R ${MY_PATH}/serverless ${MY_PATH}/tmp/serverless \
 && cd ${MY_PATH}/tmp/serverless \
 && ${SERVERLESS} deploy
