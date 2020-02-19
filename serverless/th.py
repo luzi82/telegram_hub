@@ -1,6 +1,7 @@
 import datetime
-import futsu.storage
 import futsu.aws.s3
+import futsu.hash
+import futsu.storage
 import hashlib
 import json
 import logging
@@ -10,15 +11,10 @@ import telegram
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def sha(s):
-    m = hashlib.sha256()
-    m.update(s.encode('utf8'))
-    return m.hexdigest()
-
 def listench(chat_id, word_list):
     now = int(datetime.datetime.now().timestamp())
     
-    err_msg = 'listench <ch_id> {} <time> <secret>'.format(chat_id)
+    err_msg = 'listench {} <ch_id> <time> <secret>'.format(chat_id)
 
     if len(word_list) != 5: return err_msg
     _, ch_id, _chat_id, ts, _secret = word_list
@@ -29,13 +25,13 @@ def listench(chat_id, word_list):
     if abs(ts_int-now) > 30: return 'XJRZXOMC: BAD time, now={now}'.format(now=now)
     
     secret = os.environ.get('TELEGRAM_HUB_SECRET')
-    secret = 'listench,{ch_id},{chat_id},{ts},{secret}'.format(
-        ch_id = ch_id,
+    secret = '{secret},listench,{chat_id},{ch_id},{ts}'.format(
         chat_id = chat_id,
+        ch_id = ch_id,
         ts = ts,
         secret = secret
     )
-    secret = sha(secret)
+    secret = futsu.hash.sha256(secret)
     if _secret != secret: return 'BAD secret'
 
     bucket = os.environ.get('S3_BUCKET')
@@ -51,10 +47,10 @@ def listench(chat_id, word_list):
 def unlistench(chat_id, word_list):
     now = int(datetime.datetime.now().timestamp())
     
-    err_msg = 'listench <ch_id> {} <time> <secret>'.format(chat_id)
+    err_msg = 'unlistench {} <ch_id> <time> <secret>'.format(chat_id)
 
     if len(word_list) != 5: return err_msg
-    _, ch_id, _chat_id, ts, _secret = word_list
+    _, _chat_id, ch_id, ts, _secret = word_list
 
     if _chat_id != str(chat_id): return err_msg
 
@@ -62,13 +58,13 @@ def unlistench(chat_id, word_list):
     if abs(ts_int-now) > 30: return 'EOAUNQBF: BAD time, now={ts_int}'.format(ts_int=ts_int)
     
     secret = os.environ.get('TELEGRAM_HUB_SECRET')
-    secret = 'unlistench,{ch_id},{chat_id},{ts},{secret}'.format(
-        ch_id = ch_id,
+    secret = '{secret},unlistench,{chat_id},{ch_id},{ts}'.format(
         chat_id = chat_id,
+        ch_id = ch_id,
         ts = ts,
         secret = secret,
     )
-    secret = sha(secret)
+    secret = futsu.hash.sha256(secret)
     if _secret != secret: return 'BAD secret'
 
     bucket = os.environ.get('S3_BUCKET')
@@ -109,10 +105,10 @@ def send_msg(input_json):
 
     # check secret
     secret = os.environ.get('TELEGRAM_HUB_SECRET')
-    secret = 'send_msg_secret,{src},{ch_id},{ssecret}'.format(ssecret=secret,**input_data)
-    secret = sha(secret)
-    secret = 'send_msg,{msg},{ts},{ssecret}'.format(ssecret=secret,**input_data)
-    secret = sha(secret)
+    secret = '{ssecret},send_msg_secret,{src},{ch_id}'.format(ssecret=secret,**input_data)
+    secret = futsu.hash.sha256(secret)
+    secret = '{ssecret},send_msg,{msg},{ts}'.format(ssecret=secret,**input_data)
+    secret = futsu.hash.sha256(secret)
     if secret != input_data['secret']:
         return {
             'result':'ERROR',

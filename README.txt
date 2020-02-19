@@ -26,7 +26,7 @@ CHAT_ID=[chat_id]          # output of bot reply
 TH_SECRET=[TELEGRAM_TOKEN] # refer to serverless.env.yml
 
 D=`date +%s`
-TOKEN=`echo -n "listench,${CH_ID},${CHAT_ID},${D},${TH_SECRET}" | shasum -a 256 | awk '{ print $1 }'`
+TOKEN=`echo -n "${TH_SECRET},listench,${CH_ID},${CHAT_ID},${D}" | shasum -a 256 | awk '{ print $1 }'`
 echo "/listench ${CH_ID} ${CHAT_ID} ${D} ${TOKEN}"
 
 Send the output to Telegram, in 30 sec.
@@ -41,9 +41,9 @@ CH_ID=[ch_id]              # same as above
 TH_SECRET=[TELEGRAM_TOKEN] # refer to serverless.env.yml
 SEND_MSG_URL=https://xxx.execute-api.xxx.amazonaws.com/dev/send_msg # API gateway created by serverless
 
-T0=`echo -n "send_msg_secret,${SRC_ID},${CH_ID},${TH_SECRET}" | shasum -a 256 | awk '{ print $1 }'` # can be reused in every msg
+T0=`echo -n "${TH_SECRET},send_msg_secret,${SRC_ID},${CH_ID}" | shasum -a 256 | awk '{ print $1 }'` # can be reused in every msg
 D=`date +%s`
-T1=`echo -n "send_msg,${MSG},${D},${T0}" | shasum -a 256 | awk '{ print $1 }'`
+T1=`echo -n "${T0},send_msg,${MSG},${D}" | shasum -a 256 | awk '{ print $1 }'`
 curl -X POST ${SEND_MSG_URL} -d "{\"src\":\"${SRC_ID}\",\"ch_id\":\"${CH_ID}\",\"msg\":\"${MSG}\",\"ts\":\"${D}\",\"secret\":\"${T1}\"}"
 
 All chat which have subscript the channel should receive msg
