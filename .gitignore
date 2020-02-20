@@ -3,3 +3,4 @@ README.md.sl
 /conf/serverless.dev.json
 /conf/serverless.dev.result.json
 tmp
+venv
