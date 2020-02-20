@@ -81,7 +81,7 @@ def webhook(event, context):
 
     if ret_text is not None:
         bot.sendMessage(chat_id=chat_id, text=ret_text)
-    logger.info('Message sent')
+        logger.info('Message sent')
 
     return OK_RESPONSE
 
