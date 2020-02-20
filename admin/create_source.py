@@ -4,9 +4,9 @@ import futsu.hash
 import os.path
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--stage-id")
-parser.add_argument("--source-id")
-parser.add_argument("--channel-id")
+parser.add_argument("--stage-id",   required=True)
+parser.add_argument("--source-id",  required=True)
+parser.add_argument("--channel-id", required=True)
 args = parser.parse_args()
 
 serverless_json_path = os.path.join('..','conf','serverless.{}.json'.format(args.stage_id))
@@ -25,7 +25,7 @@ source_secret = '{TH_SECRET},send_msg_secret,{SRC_ID},{CH_ID}'.format(
 )
 source_secret = futsu.hash.sha256_str(source_secret)
 
-cmd = 'python3 reg_source.py --send-msg-url {SEND_MSG_URL} --source-id {SRC_ID} --channel-id {CH_ID} --secret {SRC_SECRET}'.format(
+cmd = 'python3 reg_source.py --send-msg-url {SEND_MSG_URL} --source-id {SRC_ID} --channel-id {CH_ID} --secret {SRC_SECRET} --reg-id xxx'.format(
     SRC_ID=args.source_id,
     CH_ID=args.channel_id,
     SEND_MSG_URL=send_msg_url,
